@@ -47,7 +47,6 @@ function createFIFO(path: string) {
 
 function openFIFO(path: string) {
     try {
-        // Re-validate ownership at open time in case anything raced our mkfifo.
         const st = statSync(path);
         const myUid = typeof process.getuid === "function" ? process.getuid() : -1;
         if (st.uid !== myUid) {

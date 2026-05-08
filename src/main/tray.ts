@@ -11,6 +11,7 @@ import { STATIC_DIR } from "shared/paths";
 import { createAboutWindow } from "./about";
 import { createArgumentsWindow } from "./arguments";
 import { restartArRPC } from "./arrpc";
+import { createArRPCWindow } from "./arrpcWindow";
 import { AppEvents } from "./events";
 import { Settings } from "./settings";
 import { resolveAssetPath } from "./userAssets";
@@ -221,9 +222,12 @@ export async function initTray(win: BrowserWindow, setIsQuitting: (val: boolean)
                 const menuItems = [
                     { id: 1, label: win.isVisible() ? "Hide" : "Open", enabled: true, visible: true },
                     { id: 2, label: "About", enabled: true, visible: true },
+                    { id: 11, type: "separator" as const, enabled: true, visible: true },
+                    { id: 5, label: "Launch Arguments", enabled: true, visible: true },
+                    { id: 10, label: "Configure Rich Presence", enabled: true, visible: true },
+                    { id: 12, type: "separator" as const, enabled: true, visible: true },
                     { id: 3, label: "Repair Equicord", enabled: true, visible: true },
                     { id: 4, label: "Reset Equibop", enabled: true, visible: true },
-                    { id: 5, label: "Launch Arguments", enabled: true, visible: true },
                     {
                         id: 6,
                         label: "Restart arRPC",
@@ -276,6 +280,9 @@ export async function initTray(win: BrowserWindow, setIsQuitting: (val: boolean)
                         case 6: // restart arRPC-bun
                             restartArRPC();
                             break;
+                        case 10: // configure rich presence
+                            createArRPCWindow();
+                            break;
                         case 8: // restart
                             setTimeout(() => {
                                 destroyTray();
@@ -320,6 +327,16 @@ export async function initTray(win: BrowserWindow, setIsQuitting: (val: boolean)
             label: "About",
             click: createAboutWindow
         },
+        { type: "separator" },
+        {
+            label: "Launch Arguments",
+            click: createArgumentsWindow
+        },
+        {
+            label: "Configure Rich Presence",
+            click: createArRPCWindow
+        },
+        { type: "separator" },
         {
             label: "Repair Equicord",
             async click() {
@@ -336,19 +353,13 @@ export async function initTray(win: BrowserWindow, setIsQuitting: (val: boolean)
             }
         },
         {
-            label: "Launch Arguments",
-            click: createArgumentsWindow
-        },
-        {
             label: "Restart arRPC",
             visible: Settings.store.arRPC === true,
             async click() {
                 await restartArRPC();
             }
         },
-        {
-            type: "separator"
-        },
+        { type: "separator" },
         {
             label: "Restart",
             click() {
